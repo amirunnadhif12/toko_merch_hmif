@@ -29,6 +29,7 @@ class UserController {
       if (existingUser['password'] == user.password) {
         message = "Login Successful";
         final pref = await SharedPreferences.getInstance();
+        await pref.setInt('userId', existingUser['id']);
         await pref.setString('nama', existingUser['nama']);
         await pref.setString('email', existingUser['email']);
 
@@ -40,6 +41,7 @@ class UserController {
     }
     return message;
   }
+
   Future<bool> checkSession() async {
     final pref = await SharedPreferences.getInstance();
     String? email = pref.getString('email');
@@ -47,6 +49,22 @@ class UserController {
       return true;
     } 
     return false;
+  }
+
+  Future<Map<String, dynamic>?> getCurrentUser() async {
+    final pref = await SharedPreferences.getInstance();
+    int? userId = pref.getInt('userId');
+    String? nama = pref.getString('nama');
+    String? email = pref.getString('email');
+    
+    if (userId != null && nama != null && email != null) {
+      return {
+        'id': userId,
+        'nama': nama,
+        'email': email,
+      };
+    }
+    return null;
   }
 
   Future<void> logout() async {
